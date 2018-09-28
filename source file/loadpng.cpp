@@ -107,7 +107,7 @@ Example: if(!uivector_resizev(&frequencies_ll, 286, 0)) ERROR_BREAK(83);
   errorvar = code;\
   break;\
 }
-
+ 
 /*version of CERROR_BREAK that assumes the common case where the error variable is named "error"*/
 #define ERROR_BREAK(code) CERROR_BREAK(error, code)
 
