@@ -22,3 +22,6 @@ The final result will automatically save at your desktop.
 Thanks very much for the png read library provided by lvandeve.
 The project address is https://github.com/lvandeve/lodepng
 (It's a very simple library without any other lib as "libpng" or "zlib". I highly recommend it to those who wanna read/write PNG files.)
+
+How to use:
+        You could copy codes(three file including header and its implementation and main file) to your IDE, or download the exe I've compiled named "characterDrawing.exe", then follow the instruction inside the program.
