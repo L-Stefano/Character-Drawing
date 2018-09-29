@@ -1,6 +1,6 @@
 # Character-Drawing
 
-The final result is shown in the "TIM截图20180928232917.png"
+The final result is shown in the "TIM截图**********.png"
 
 This software ONLY SUPPORT PNG FORMAT!!!
 
