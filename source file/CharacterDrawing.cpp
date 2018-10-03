@@ -3,7 +3,7 @@ This software is following MIT License written below:
 
 MIT License
 
-Copyright (c) [year] [fullname]
+Copyright (c) [2018-2019] [Character-Drawing]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ Author:L-Stefano
 #include <iostream>
 #include <string>
 #include <ShlObj.h>
+#include <fstream>
 using namespace std;
 void getGray(const vector<unsigned char> &image, vector<unsigned char> &gray);//Get the gray level of image, then save in vector gray
 void mapping(vector<unsigned char> &gray);//Mapping gray value [0,255] to printable char [33-126]
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
 	cout << "	4. (IMPORTANT) Please use monospaced fonts" << endl;
 	cout << "	5. If the final result txt is too big to display, there are two ways to improve:" << endl;
 	cout << "	  1>. Adjust font size smaller." << endl;
-	cout << "	  1>. Retry a image with smaller resolution." << endl << endl;
+	cout << "	  2>. Retry a image with smaller resolution." << endl << endl;
 	cout << "Noiced that the aspect ratio of the original image to the result is not 1:1" << endl;
 	cout << "	The result will be higher in height. The solution is that reducing height to 0.5-0.75 \n	ahead of time (with Photoshop), or expand the width to 0.5-0.75 " << endl;
 
@@ -67,15 +68,13 @@ int main(int argc, char *argv[])
 	//Find error
 	if (error) std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
 
-	//Decoding is complete, pixels are stored in image
+	//Decoding completed, pixels are stored in image
 
 	vector<unsigned char> gray;//vector of gray level
 	getGray(image, gray);
 
 	mapping(gray);
 	toTXT(width, gray);
-
-	cout << "SUCCESS! Result is saved in your desktop, named \"Resule.txt\"" << endl;
 
 	system("pause");
 	return EXIT_SUCCESS;
@@ -84,7 +83,6 @@ void getGray(const vector<unsigned char> &image, vector<unsigned char> &gray)
 {
 	unsigned char Gray;//for saving gray value
 	unsigned char R, G, B;
-
 
 	auto beg = image.cbegin();//beginning iterator
 	while (beg != image.cend())
@@ -100,10 +98,10 @@ void getGray(const vector<unsigned char> &image, vector<unsigned char> &gray)
 void mapping(vector<unsigned char> &gray)
 {
 
-	for (int a = 0, b = mappingThreshold, ascii = 32; b<=256+mappingThreshold; a += mappingThreshold, b += mappingThreshold, ascii++)
+	for (int a = 0, b = mappingThreshold, ascii = 31; b <= 256 + mappingThreshold; a += mappingThreshold, b += mappingThreshold, ++ascii)
 		for (auto&i : gray)
 		{
-			if (i >= a && i <= b)
+			if (i >= a && i < b)
 				i = ascii;
 		}
 }
@@ -113,17 +111,22 @@ void toTXT(unsigned Width, vector<unsigned char> &gray)
 	SHGetSpecialFolderPath(0, path, CSIDL_DESKTOPDIRECTORY, 0);//Get the path of user's desktop
 	strcat(path, "\\Result.txt");
 
-	FILE *fp;
-	fp = fopen(path , "w");//New statements _CRT_SECURE_NO_DEPRECATE in preprocessor
-
-	int loop = 0; 
-	for (auto chara : gray)
+	fstream file;
+	file.open(path, ofstream::out);
+	if (file)
 	{
-		fputc(chara, fp);
-		if (loop++ == Width-1)//Print a new line character for every width character printed
+		int loop = 1;
+		for (auto chara : gray)
 		{
-			putc('\n', fp);
-			loop = 0;
+			file << chara;
+			if (loop++ == Width)//Print a new line character for every width character printed
+			{
+				file << endl;
+				loop = 1;
+			}
 		}
+		cout << "SUCCESS! Result is saved in your desktop, named \"Resule.txt\"" << endl;
 	}
+	else
+		cerr << "FAIL to write txt!" << endl;
 }
